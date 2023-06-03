@@ -7,3 +7,9 @@
 - EJS
 - Morgan (middleware)
 - MongoDB
+- Mongoose
+
+### Install all the dependencies
+```
+npm install
+```
