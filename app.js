@@ -7,7 +7,7 @@ const Blog = require("./models/blog");
 const app = express();
 
 // connection to mongoDB
-const dbURI = "mongodb+srv://caioopra:<password>.jgjtkzr.mongodb.net/nodeBlog?retryWrites=true&w=majority";
+const dbURI = "mongodb+srv://caioopra:Z1toLjllxRKGqn8O@nodeblog.jgjtkzr.mongodb.net/nodeBlog?retryWrites=true&w=majority";
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then((result) => {
         app.listen(3000);
@@ -20,49 +20,31 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(morgan("dev"));
 
-// mongoose and mongoDB testing routes
-app.get("/add-blog", (req, res) => {
-    const blog = new Blog({
-        title: "New Blog 2.0",
-        snippet: "About my new blog",
-        body: "More about my blog"
-    });
-
-    blog.save()
-        .then((result) => {
-            res.send(result)
-        })
-        .catch((err) => console.log(err));
-});
-
-app.get("/all-blogs", (req, res) => {
-    Blog.find()
-        .then((result) => {
-            res.send(result)
-        })
-        .catch((err) => console.log(err));
-})
-
-app.get("/single-blog", (req, res) => {
-    Blog.findById("647b46d77ade5d98971ca732")
-        .then((result) => {
-            res.send(result)
-        })
-        .catch((err) => console.log(err));
-})
-
 app.get("/", (req, res) => {
-    const blogs = [
-        { title: "Blog number 1", snippet: "Lorem ipsum dolor sit amet consectetur"},
-        { title: "Blog number 2", snippet: "Lorem ipsum dolor sit amet consectetur"},
-        { title: "Blog number 3", snippet: "Lorem ipsum dolor sit amet consectetur"},
-    ];
+    // TODO: change this to a separte homepage
+    // const blogs = [
+    //     { title: "Blog number 1", snippet: "Lorem ipsum dolor sit amet consectetur"},
+    //     { title: "Blog number 2", snippet: "Lorem ipsum dolor sit amet consectetur"},
+    //     { title: "Blog number 3", snippet: "Lorem ipsum dolor sit amet consectetur"},
+    // ];
 
-    res.render("index", { title: "Home", blogs} );
+    // res.render("index", { title: "Home", blogs} );
+
+    // currently redirecting the home page to the blogs page
+    res.redirect("/blogs");
 });
 
 app.get("/about", (req, res) => {
     res.render("about", { title: "About"} );
+});
+
+// blog routes
+app.get(("/blogs"), (req, res) => {
+    Blog.find().sort( { createdAt: -1 }) // descending order
+        .then((result) => {
+            res.render("index", { title: "All Blogs", blogs: result })
+        })
+        .catch((error) => console.log(error));
 });
 
 app.get("/blogs/create", (req, res) => {
